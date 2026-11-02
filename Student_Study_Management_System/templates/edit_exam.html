@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Exam</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .edit-container {
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .edit-container input,
+        .edit-container textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 18px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            box-sizing: border-box;
+        }
+
+        .edit-container button,
+        .back-btn {
+            padding: 11px 20px;
+            background: #f28c28;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            background: #173b72;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='logo.jpeg') }}">
+            <h2>Study Manager</h2>
+        </div>
+
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/subjects">Subjects</a>
+            <a href="/timetable">Study Timetable</a>
+            <a href="/assignments">Assignments</a>
+            <a href="/exams" class="active">Exams</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </aside>
+
+    <main class="edit-container">
+
+        <h1>Edit Exam</h1>
+
+        <form method="POST">
+
+            <label>Exam Name</label>
+            <input type="text" name="exam_name"
+                   value="{{ exam[2] }}" required>
+
+            <label>Subject</label>
+            <input type="text" name="subject"
+                   value="{{ exam[3] }}" required>
+
+            <label>Exam Date</label>
+            <input type="date" name="exam_date"
+                   value="{{ exam[4] }}" required>
+
+            <label>Syllabus</label>
+            <textarea name="syllabus" rows="4">{{ exam[5] }}</textarea>
+
+            <label>Preparation Progress (%)</label>
+            <input type="number" name="preparation_progress"
+                   min="0" max="100"
+                   value="{{ exam[6] }}" required>
+
+            <button type="submit">Update Exam</button>
+
+            <a href="/exams" class="back-btn">Cancel</a>
+
+        </form>
+
+    </main>
+
+</div>
+
+</body>
+</html>

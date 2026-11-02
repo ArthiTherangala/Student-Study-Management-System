@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Subject</title>
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="main-content">
+
+    <div class="dashboard-card">
+
+        <h1>Edit Subject</h1>
+
+        <form method="POST">
+
+            <label>Subject Name</label>
+
+            <input type="text"
+                   name="subject_name"
+                   value="{{ subject[2] }}"
+                   required>
+
+            <label>Subject Code</label>
+
+            <input type="text"
+                   name="subject_code"
+                   value="{{ subject[3] or '' }}">
+
+            <button type="submit">Save Changes</button>
+
+        </form>
+
+        <br>
+
+        <a href="/subjects">Back to Subjects</a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

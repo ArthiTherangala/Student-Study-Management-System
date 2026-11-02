@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Subjects</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .sidebar {
+            background: #191970 !important;
+            color: white;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 13px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: #008080;
+            color: white;
+        }
+
+        .top-profile {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #191970;
+            font-weight: bold;
+        }
+
+        .top-profile img,
+        .profile-placeholder {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #008080;
+        }
+
+        .profile-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='logo.jpeg') }}"
+                 alt="Logo">
+            <h2>Study Manager</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="/profile">Profile</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/subjects" class="active">Subjects</a>
+            <a href="/timetable">Timetable</a>
+            <a href="/assignments">Assignments</a>
+            <a href="/exams">Exams</a>
+
+<a href="/logout"
+   onclick="return confirm('Are you sure you want to logout?');">
+    Logout
+</a>
+
+        </nav>
+
+    </aside>
+
+    <main class="main-content">
+
+        <!-- Top Right Profile -->
+        <div class="top-profile">
+            {% if top_profile_picture %}
+                <img src="{{ url_for('static', filename='profile_uploads/' ~ top_profile_picture) }}"
+                     alt="Profile Picture">
+            {% else %}
+                <div class="profile-placeholder">👤</div>
+            {% endif %}
+
+            <span>{{ top_profile_username }}</span>
+        </div>
+
+        <h1>My Subjects</h1>
+        <p>Manage your academic subjects here.</p>
+
+        <div class="dashboard-card">
+
+            <h2>Add New Subject</h2>
+
+            <form method="POST" action="/subjects">
+
+                <label>Subject Name</label>
+                <input type="text"
+                       name="subject_name"
+                       placeholder="Enter subject name"
+                       required>
+
+                <label>Subject Code</label>
+                <input type="text"
+                       name="subject_code"
+                       placeholder="Enter subject code">
+
+                <button type="submit">Add Subject</button>
+
+            </form>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <h2>My Subject List</h2>
+
+            {% if subjects %}
+
+                {% for item in subjects %}
+
+                    <div class="subject-item">
+
+                        <h3>{{ item[2] }}</h3>
+
+                        {% if item[3] %}
+                            <p>{{ item[3] }}</p>
+                        {% endif %}
+
+                        <a href="/edit_subject/{{ item[0] }}">
+                            Edit
+                        </a>
+
+                        <form action="/delete_subject/{{ item[0] }}"
+                              method="POST">
+
+                            <button type="submit">
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    <hr>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>No subjects added yet.</p>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

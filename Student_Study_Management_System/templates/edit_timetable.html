@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Timetable</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="main-content">
+
+    <h1>Edit Timetable</h1>
+
+    <form method="POST">
+
+        <label>Day:</label>
+        <select name="day" required>
+            <option value="Monday" {% if item[2] == 'Monday' %}selected{% endif %}>Monday</option>
+            <option value="Tuesday" {% if item[2] == 'Tuesday' %}selected{% endif %}>Tuesday</option>
+            <option value="Wednesday" {% if item[2] == 'Wednesday' %}selected{% endif %}>Wednesday</option>
+            <option value="Thursday" {% if item[2] == 'Thursday' %}selected{% endif %}>Thursday</option>
+            <option value="Friday" {% if item[2] == 'Friday' %}selected{% endif %}>Friday</option>
+            <option value="Saturday" {% if item[2] == 'Saturday' %}selected{% endif %}>Saturday</option>
+            <option value="Sunday" {% if item[2] == 'Sunday' %}selected{% endif %}>Sunday</option>
+        </select>
+
+        <br><br>
+
+        <label>Subject:</label>
+        <input type="text" name="subject" value="{{ item[3] }}" required>
+
+        <br><br>
+
+        <label>Start Time:</label>
+        <input type="time" name="start_time" value="{{ item[4] }}" required>
+
+        <br><br>
+
+        <label>End Time:</label>
+        <input type="time" name="end_time" value="{{ item[5] }}" required>
+
+        <br><br>
+
+        <button type="submit">Update Timetable</button>
+
+    </form>
+
+    <br>
+    <a href="/timetable">Back to Timetable</a>
+
+</div>
+
+</body>
+</html>

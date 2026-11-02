@@ -1,0 +1,338 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            min-width: 240px;
+            background: #191970;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .sidebar-logo img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            display: block;
+            margin: auto;
+        }
+
+        .sidebar h2 {
+            color: white;
+            text-align: center;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 13px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: #008080;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            background: #f5f7fa;
+        }
+
+        .profile-card {
+            max-width: 550px;
+            background: white;
+            padding: 30px;
+            margin: 20px auto;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #ddd;
+        }
+
+        /* Profile Picture */
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #008080;
+            display: block;
+            margin: 10px auto;
+        }
+
+        .no-picture {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e8f5f5;
+            color: #008080;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        /* Form */
+        .profile-card label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .profile-card input,
+        .profile-card textarea {
+            width: 100%;
+            padding: 11px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .profile-card button {
+            padding: 11px 20px;
+            margin: 15px 5px 0 0;
+            border: none;
+            border-radius: 6px;
+            background: #008080;
+            color: white;
+            cursor: pointer;
+        }
+
+        .profile-card .delete-btn {
+            background: #191970;
+        }
+
+        @media(max-width: 700px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='logo.jpeg') }}"
+                 alt="App Logo">
+
+            <h2>Study Manager</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/profile" class="active">Profile</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/subjects">Subjects</a>
+            <a href="/timetable">Study Timetable</a>
+            <a href="/assignments">Assignments</a>
+            <a href="/exams">Exams</a>
+
+<a href="/logout"
+   onclick="return confirm('Are you sure you want to logout?');">
+    Logout
+</a>
+
+
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <h1>My Profile</h1>
+
+        <div class="profile-card">
+
+            <form action="/profile"
+                  method="POST"
+                  enctype="multipart/form-data">
+
+                <!-- Profile Picture -->
+
+                {% if profile and profile.profile_picture %}
+
+                    <img id="preview"
+                         src="{{ url_for('static', filename='profile_uploads/' ~ profile.profile_picture) }}"
+                         class="profile-picture"
+                         alt="Profile Picture">
+
+                {% else %}
+
+                    <div id="no-picture"
+                         class="profile-picture no-picture">
+                        No Photo
+                    </div>
+
+                    <img id="preview"
+                         class="profile-picture"
+                         style="display:none;"
+                         alt="Profile Picture">
+
+                {% endif %}
+
+                <label>Profile Picture</label>
+
+                <input type="file"
+                       name="profile_picture"
+                       accept="image/*"
+                       onchange="previewImage(event)">
+
+
+                <!-- Name -->
+
+                <label>Name</label>
+
+                <input type="text"
+                       id="name"
+                       name="name"
+                       value="{{ profile.name if profile else '' }}"
+                       readonly
+                       required>
+
+
+                <!-- Email -->
+
+                <label>Email (Optional)</label>
+
+                <input type="email"
+                       id="email"
+                       name="email"
+                       value="{{ profile.email if profile else '' }}"
+                       readonly>
+
+
+                <!-- Phone -->
+
+                <label>Phone Number</label>
+
+                <input type="tel"
+                       id="phone"
+                       name="phone"
+                       value="{{ profile.phone if profile else '' }}"
+                       readonly>
+
+
+                <!-- Caption -->
+
+                <label>Caption</label>
+
+                <textarea id="caption"
+                          name="caption"
+                          rows="3"
+                          readonly>{{ profile.caption if profile else '' }}</textarea>
+
+
+                <!-- Buttons -->
+
+                <button type="button"
+                        onclick="enableEdit()">
+                    Edit
+                </button>
+
+                <button type="submit">
+                    Save
+                </button>
+
+                <button type="button"
+                        class="delete-btn"
+                        onclick="deletePicture()">
+                    Delete Picture
+                </button>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    // Profile Picture Preview
+    function previewImage(event) {
+
+        const file = event.target.files[0];
+
+        if (file) {
+
+            const reader = new FileReader();
+
+            reader.onload = function() {
+
+                document.getElementById("preview").src =
+                    reader.result;
+
+                document.getElementById("preview").style.display =
+                    "block";
+
+                const placeholder =
+                    document.getElementById("no-picture");
+
+                if (placeholder) {
+                    placeholder.style.display = "none";
+                }
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+
+    // Edit Profile
+    function enableEdit() {
+
+        document.getElementById("name").readOnly = false;
+        document.getElementById("email").readOnly = false;
+        document.getElementById("phone").readOnly = false;
+        document.getElementById("caption").readOnly = false;
+
+        document.getElementById("name").focus();
+    }
+
+
+    // Delete Profile Picture
+    function deletePicture() {
+
+        if (confirm("Remove profile picture?")) {
+
+            window.location.href =
+                "/delete_profile_picture";
+        }
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .sidebar {
+            background: #191970 !important;
+            color: #ffffff;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 13px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: #008080;
+            color: #ffffff;
+        }
+
+        .top-profile {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #191970;
+            font-weight: bold;
+        }
+
+        .top-profile img,
+        .profile-placeholder {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #008080;
+        }
+
+        .profile-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo">
+            <h2>Study Manager</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+            <a href="/profile">Profile</a>
+            <a href="/dashboard" class="active">Dashboard</a>
+            <a href="/subjects">Subjects</a>
+            <a href="/timetable">Timetable</a>
+            <a href="/assignments">Assignments</a>
+            <a href="/exams">Exams</a>
+
+<a href="/logout"
+   onclick="return confirm('Are you sure you want to logout?');">
+    Logout
+</a>
+
+        </nav>
+
+    </aside>
+
+    <main class="main-content">
+
+        <!-- Top Right Profile -->
+        <div class="top-profile">
+            {% if top_profile_picture %}
+                <img src="{{ url_for('static', filename='profile_uploads/' ~ top_profile_picture) }}"
+                     alt="Profile Picture">
+            {% else %}
+                <div class="profile-placeholder">👤</div>
+            {% endif %}
+
+            <span>{{ top_profile_username }}</span>
+        </div>
+
+        <h1>Student Study Management System</h1>
+        <h2>Welcome, {{ student_name }}!</h2>
+        <p>Today's Date: {{ today_date }}</p>
+
+        <!-- Assignment Reminders -->
+        {% if reminders %}
+            <div class="dashboard-card">
+                <h2>⚠️ Assignment Reminders</h2>
+
+                {% for item in reminders %}
+                    <div>
+                        <h3>{{ item[0] }}</h3>
+                        <p>Due Date: {{ item[1] }}</p>
+
+                        {% if item[2] < 0 %}
+                            <p style="color:red;">
+                                Overdue by {{ item[2] | abs }} days!
+                            </p>
+                        {% elif item[2] == 0 %}
+                            <p style="color:red;">Due Today!</p>
+                        {% else %}
+                            <p style="color:orange;">
+                                Due in {{ item[2] }} days!
+                            </p>
+                        {% endif %}
+                    </div>
+                    <hr>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="dashboard-grid">
+
+            <a href="/timetable" style="text-decoration:none; color:inherit;">
+                <div class="dashboard-card">
+                    <h3>Today's Timetable</h3>
+
+                    {% if timetable %}
+                        {% for item in timetable %}
+                            <p>
+                                {{ item[0] }} -
+                                {{ item[1] }} to {{ item[2] }}
+                            </p>
+                        {% endfor %}
+                    {% else %}
+                        <p>No timetable added for today.</p>
+                    {% endif %}
+
+                    <p>Click to manage timetable →</p>
+                </div>
+            </a>
+
+            <a href="/assignments" style="text-decoration:none; color:inherit;">
+                <div class="dashboard-card">
+                    <h3>Assignments</h3>
+
+                    {% if assignments %}
+                        {% for item in assignments %}
+                            <p><strong>{{ item[0] }}</strong></p>
+                            <p>Due Date: {{ item[1] }}</p>
+                            <hr>
+                        {% endfor %}
+                    {% else %}
+                        <p>No assignments added yet.</p>
+                    {% endif %}
+
+                    <p>Click to manage assignments →</p>
+                </div>
+            </a>
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

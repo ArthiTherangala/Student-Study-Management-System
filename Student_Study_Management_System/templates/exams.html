@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Management</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .sidebar {
+            background: #191970 !important;
+            color: white;
+        }
+
+        .sidebar nav a {
+            display: block;
+            color: white !important;
+            text-decoration: none;
+            padding: 13px 18px;
+            margin: 5px 0;
+            border-radius: 7px;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.active {
+            background: #008080;
+            color: white !important;
+        }
+
+        .exam-container {
+            flex: 1;
+            padding: 30px;
+            color: #191970;
+            box-sizing: border-box;
+        }
+
+        .exam-container h1 {
+            text-align: center;
+        }
+
+        .exam-section {
+            background: white;
+            padding: 22px;
+            margin: 25px 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .exam-section h2 {
+            text-align: center;
+            color: #191970;
+        }
+
+        .exam-card {
+            border: 1px solid #d8e5e5;
+            border-left: 5px solid #008080;
+            padding: 18px;
+            margin: 15px 0;
+            border-radius: 9px;
+        }
+
+        .exam-form input,
+        .exam-form textarea {
+            width: 100%;
+            padding: 11px;
+            margin: 8px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .exam-form button,
+        .exam-actions button,
+        .exam-actions a {
+            background: #008080;
+            color: white;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .exam-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .exam-actions .delete-btn {
+            background: #191970;
+        }
+
+        .progress-track {
+            background: #e5eeee;
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #008080;
+            height: 10px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #666;
+        }
+
+        .top-profile {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #191970;
+            font-weight: bold;
+        }
+
+        .top-profile img,
+        .profile-placeholder {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #008080;
+        }
+
+        .profile-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='logo.jpeg') }}"
+                 alt="Logo">
+            <h2>Study Manager</h2>
+        </div>
+
+        <nav>
+            <a href="/profile">Profile</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/subjects">Subjects</a>
+            <a href="/timetable">Study Timetable</a>
+            <a href="/assignments">Assignments</a>
+            <a href="/exams" class="active">Exams</a>
+
+<a href="/logout"
+   onclick="return confirm('Are you sure you want to logout?');">
+    Logout
+</a>
+
+        </nav>
+
+    </aside>
+
+    <main class="exam-container">
+
+        <!-- Top Right Profile -->
+        <div class="top-profile">
+            {% if top_profile_picture %}
+                <img src="{{ url_for('static', filename='profile_uploads/' ~ top_profile_picture) }}"
+                     alt="Profile Picture">
+            {% else %}
+                <div class="profile-placeholder">👤</div>
+            {% endif %}
+
+            <span>{{ top_profile_username }}</span>
+        </div>
+
+        <h1>Exam Management</h1>
+
+        <p style="text-align:center;">
+            Plan your exams and track your preparation.
+        </p>
+
+        <!-- Upcoming Exams -->
+        <section class="exam-section">
+
+            <h2>Upcoming Exams</h2>
+
+            {% for item in exams %}
+
+                {% set exam = item[0] %}
+                {% set days = item[1] %}
+
+                <div class="exam-card">
+
+                    <h3>{{ exam[1] }}</h3>
+
+                    <p><strong>Subject:</strong> {{ exam[2] }}</p>
+
+                    <p><strong>Exam Date:</strong> {{ exam[3] }}</p>
+
+                    <p><strong>Syllabus:</strong> {{ exam[4] }}</p>
+
+                    <p>
+                        <strong>Preparation:</strong>
+                        {{ exam[5] }}%
+                    </p>
+
+                    <div class="progress-track">
+                        <div class="progress-fill"
+                             style="width: {{ exam[5] }}%;">
+                        </div>
+                    </div>
+
+                    <p>
+                        <strong>Countdown:</strong>
+
+                        {% if days is none %}
+                            Date unavailable
+                        {% elif days > 0 %}
+                            {{ days }} days left
+                        {% elif days == 0 %}
+                            Exam is today!
+                        {% else %}
+                            Exam date passed
+                        {% endif %}
+                    </p>
+
+                    <div class="exam-actions">
+
+                        <a href="/edit_exam/{{ exam[0] }}">
+                            Edit
+                        </a>
+
+                        <form action="/delete_exam/{{ exam[0] }}"
+                              method="POST"
+                              onsubmit="return confirm('Delete this exam?');">
+
+                            <button type="submit" class="delete-btn">
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <p class="empty-message">
+                    No exams added yet.
+                </p>
+
+            {% endfor %}
+
+        </section>
+
+        <!-- Add New Exam -->
+        <section class="exam-section exam-form">
+
+            <h2>Add New Exam</h2>
+
+            <form method="POST" action="/exams">
+
+                <label>Exam Name</label>
+                <input type="text"
+                       name="exam_name"
+                       placeholder="Enter exam name"
+                       required>
+
+                <label>Subject</label>
+                <input type="text"
+                       name="subject"
+                       placeholder="Enter subject"
+                       required>
+
+                <label>Exam Date</label>
+                <input type="date"
+                       name="exam_date"
+                       required>
+
+                <label>Syllabus</label>
+                <textarea name="syllabus"
+                          rows="4"
+                          placeholder="Enter syllabus"></textarea>
+
+                <label>Preparation Progress (%)</label>
+                <input type="number"
+                       name="preparation_progress"
+                       min="0"
+                       max="100"
+                       value="0">
+
+                <button type="submit">Add Exam</button>
+
+            </form>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

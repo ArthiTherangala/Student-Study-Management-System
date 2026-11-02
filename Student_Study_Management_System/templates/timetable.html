@@ -1,0 +1,237 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Timetable</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .main-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            min-width: 240px;
+            background: #191970 !important;
+            color: white;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-logo img {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+        }
+
+        .sidebar-logo h2 {
+            color: white;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 13px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: #008080;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 5px solid #008080;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        button {
+            background: #008080;
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .top-profile {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #191970;
+            font-weight: bold;
+        }
+
+        .top-profile img,
+        .profile-placeholder {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #008080;
+        }
+
+        .profile-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #FFFFFF;
+        }
+
+        @media (max-width: 700px) {
+            .main-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="main-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='logo.jpeg') }}"
+                 alt="Logo">
+            <h2>Study Manager</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/profile">Profile</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/subjects">Subjects</a>
+            <a href="/timetable" class="active">Timetable</a>
+            <a href="/assignments">Assignments</a>
+            <a href="/exams">Exams</a>
+
+<a href="/logout"
+   onclick="return confirm('Are you sure you want to logout?');">
+    Logout
+</a>
+
+        </nav>
+
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Top Right Profile -->
+        <div class="top-profile">
+            {% if top_profile_picture %}
+                <img src="{{ url_for('static', filename='profile_uploads/' ~ top_profile_picture) }}"
+                     alt="Profile Picture">
+            {% else %}
+                <div class="profile-placeholder">👤</div>
+            {% endif %}
+
+            <span>{{ top_profile_username }}</span>
+        </div>
+
+        <h1>My Study Timetable</h1>
+
+        <form action="/timetable" method="POST">
+
+            <label>Day:</label>
+            <select name="day" required>
+                <option value="">Select Day</option>
+                <option>Monday</option>
+                <option>Tuesday</option>
+                <option>Wednesday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+                <option>Saturday</option>
+                <option>Sunday</option>
+            </select>
+
+            <br><br>
+
+            <label>Subject:</label>
+            <input type="text" name="subject" required>
+
+            <br><br>
+
+            <label>Start Time:</label>
+            <input type="time" name="start_time" required>
+
+            <br><br>
+
+            <label>End Time:</label>
+            <input type="time" name="end_time" required>
+
+            <br><br>
+
+            <button type="submit">Add Timetable</button>
+
+        </form>
+
+        <h2>My Added Timetable</h2>
+
+        {% if timetable %}
+            {% for item in timetable %}
+
+                <div class="dashboard-card">
+
+                    <h3>{{ item[1] }}</h3>
+
+                    <p>Subject: {{ item[2] }}</p>
+                    <p>Start Time: {{ item[3] }}</p>
+                    <p>End Time: {{ item[4] }}</p>
+
+                    <a href="/edit_timetable/{{ item[0] }}">
+                        Edit
+                    </a>
+
+                    <form action="/delete_timetable/{{ item[0] }}"
+                          method="POST">
+
+                        <button type="submit">Delete</button>
+
+                    </form>
+
+                </div>
+
+            {% endfor %}
+        {% else %}
+            <p>No timetable added yet.</p>
+        {% endif %}
+
+        <br>
+        <a href="/dashboard">Back to Dashboard</a>
+
+    </main>
+
+</div>
+
+</body>
+</html>
